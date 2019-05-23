@@ -9,7 +9,7 @@ import xarray as xr
 import csv
 import glob
 
-def select_data_and_save(fin, fout, lat, long, level, needed_var):
+def select_data_and_save(fin, fout, lat, long, level, needed_var, format_data):
     # Open dataset
     ds = xr.open_dataset(fin)
 
@@ -45,7 +45,7 @@ def select_data_and_save(fin, fout, lat, long, level, needed_var):
             # So in this case we use "bare-metal" write
             file.write(str(time[i]) + 
                        dlm + 
-                       format(needed_data[i], ".3f") + 
+                       format(needed_data[i], format_data) + 
                        dlm +
                        str(level) + 
                        dlm +
@@ -69,11 +69,11 @@ def get_out_file_name(output_path, lat, lon, level, data):
 
     return result
 
-def process_all_files_in_folder(in_folder, out_folder, lat, lon, level, data):
+def process_all_files_in_folder(in_folder, out_folder, lat, lon, level, data, format_data):
     for file_path in glob.glob(in_folder + "/" + "*.nc"):
         out_file_path = out_folder + get_out_file_name(out_folder, lat, lon, level, data)
         print(" >>> Process file '{}' with output path '{}'".format(file_path, out_file_path))
-        select_data_and_save(file_path, out_file_path, lat, lon, level, data)
+        select_data_and_save(file_path, out_file_path, lat, lon, level, data, format_data)
         print("")
     
 def main():
@@ -84,10 +84,11 @@ def main():
     output_folder = ".\\output\\"
     lat = 55.0
     lon = 20.0
-    level = 10 # shall we use 10.0 instead?
+    level = 10 # work if 10.0 needed as well
     data = 'omega'
+    format_data = ".6f"
 
-    process_all_files_in_folder(input_folder, output_folder, lat, lon, level, data)
+    process_all_files_in_folder(input_folder, output_folder, lat, lon, level, data, format_data)
     
 if __name__=="__main__":
     main()
