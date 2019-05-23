@@ -12,12 +12,18 @@ import glob
 def select_data_and_save(fin, fout, lat, long, level, needed_var):
     # Open dataset
     ds = xr.open_dataset(fin)
-        
+
+    # Check levels
+    if level not in ds.coords["level"]:
+        print("Available levels")
+        print(ds.coords["level"])
+        raise ValueError("Interested level <{}> doesn't exist in the dataset. Please check your main() function or the file".format(level))
+
     # Check what we have needed data_var in own dataset. Otherwise - raise exception
     if needed_var not in ds.data_vars:
         print("Available data_vars in file")
         print(ds.data_vars)
-        raise KeyError("Interested data var <{}> doesn't exist in dataset. Please check your main() function or file".format(needed_var))
+        raise KeyError("Interested data var <{}> doesn't exist in the dataset. Please check your main() function or the file".format(needed_var))
 
     # Select air data by time with constant lat, long and level
     dsloc = ds.sel(lat=lat, lon=long, level=level)
@@ -78,8 +84,8 @@ def main():
     output_folder = ".\\output\\"
     lat = 55.0
     lon = 20.0
-    level = 10
-    data = 'hgt'
+    level = 10 # shall we use 10.0 instead?
+    data = 'omega'
 
     process_all_files_in_folder(input_folder, output_folder, lat, lon, level, data)
     
